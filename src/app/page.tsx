@@ -12,23 +12,18 @@ const Home = () => {
     "bc1pe6y27ey6gzh6p0j250kz23zra7xn89703pvmtzx239zzstg47j3s3vdvvs"
   );
   const [utxos, setUtxos] = useState<UTXO[]>([]);
-  const [error, setError] = useState<string>("");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setError("");
+
     setUtxos([]);
 
-    try {
-      axios
-        .get(`https://api-3.xverse.app/v1/address/${address}/ordinal-utxo`)
-        .then((data) => {
-          setUtxos(data?.data.results);
-        });
-      setUtxos(utxos);
-    } catch (err) {
-      setError("Failed to fetch UTXOs or invalid address.");
-    }
+    axios
+      .get(`https://api-3.xverse.app/v1/address/${address}/ordinal-utxo`)
+      .then((data) => {
+        setUtxos(data?.data.results);
+      });
+    setUtxos(utxos);
   };
 
   return (
@@ -62,14 +57,15 @@ const Home = () => {
                 {utxo.inscriptions.map((inscription) => {
                   return (
                     <li className={styles.listItem}>
-                       
-                        <Link className={styles.listItemText}
-                          key={inscription.id}
-                          href={`/inscription/${address}/${inscription.id}`}
-                        >
-                          Inscription {inscription.id.slice(0,8)}
-                        </Link>
-                      
+                      <Link
+                        className={styles.listItemText}
+                        key={inscription.id}
+                        href={`/inscription/${address}/${inscription.id}`}
+                      >
+                        // Inscription {inscription.id.slice(0, 8)}
+                        {inscription.id}
+                      </Link>
+
                       <span className={styles.listItemArrow}>&gt;</span>
                     </li>
                   );
