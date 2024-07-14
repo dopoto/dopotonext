@@ -11,3 +11,22 @@ h1 {
   font-size: 13px;
 }  
 /* 24252c */
+
+
+input {
+  background-color: #24252C;
+  color:white;
+  border: none;
+  height: 35px;
+  border-radius: 4px;
+  width:100%; 
+}
+
+button {
+  background-color: #465AE9;
+  border: none;
+  height: 35px;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;;
+}
