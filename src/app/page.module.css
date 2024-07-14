@@ -35,7 +35,7 @@
 .listItem {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
   padding:14px;
   font-weight: 500;
   font-size: 13px;

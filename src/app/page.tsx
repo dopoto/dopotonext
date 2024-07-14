@@ -29,6 +29,7 @@ const Home = () => {
     if (bitcoinAddress) {
       fetchData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
 
@@ -60,12 +61,12 @@ const Home = () => {
           <div>Results:</div>
           <ul className={styles.list}>
             {utxos?.map((utxo) => (
-              <div>
+              <div key={utxo.id}> 
                 {utxo.inscriptions.map((inscription) => {
                   return (
                     <Link
-                      className={styles.listItemText}
                       key={inscription.id}
+                      className={styles.listItemText}                      
                       href={`/inscription/${address}/${inscription.id}`}
                     >
                       <li className={styles.listItem}>
