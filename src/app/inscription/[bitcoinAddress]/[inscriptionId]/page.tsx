@@ -20,47 +20,6 @@ async function getInscriptionTextContent(contentApiEndpoint: string) {
   return data;
 }
 
-async function getInscriptionContent(
-  contentApiEndpoint: string,
-  contentType: "image/webp" | "application/json"
-): Promise<InscriptionContent> {
-  const res = await fetch(contentApiEndpoint);
-
-  const buffer = await res.arrayBuffer();
-
-  let imageUrl = "";
-
-  if (contentType === "image/webp") {
-    const blob = new Blob([buffer], { type: contentType });
-    imageUrl = URL.createObjectURL(blob);
-    const img = new Image();
-    img.src = imageUrl;
-    await img.decode();
-    return {
-      rawData: imageUrl,
-    };
-  } else if (contentType === "application/json") {
-    // Try to decode as JSON
-    const text = new TextDecoder().decode(buffer);
-    try {
-      const json = JSON.parse(text);
-      return {
-        rawData: JSON.stringify(json, null, 2),
-      };
-    } catch (e) {
-      // Not JSON, treat as plain text
-      //setContent(text);
-      return {
-        rawData: text,
-      };
-    }
-  }
-
-  return {
-    rawData: null,
-  };
-}
-
 interface Props {
   params: {
     bitcoinAddress: string;
@@ -81,12 +40,18 @@ export default async function InscriptionDetailsPage({ params }: Props) {
   //   inscriptionDetails.content_type
   // );
 
-  const rawData = await getInscriptionTextContent(contentApiEndpoint)    ;
+  const rawData = await getInscriptionTextContent(contentApiEndpoint);
 
   // const rawData =
   //   inscriptionDetails.content_type === "application/json"
   //     ? await getInscriptionTextContent(contentApiEndpoint)
   //     : null;
+
+  const content = inscriptionDetails?.content_type.startsWith("image/webp") ? (
+    <img src={contentApiEndpoint} />
+  ) : (
+    <textarea>{rawData}</textarea>
+  );
 
   return (
     <div className={styles.container}>
@@ -97,14 +62,7 @@ export default async function InscriptionDetailsPage({ params }: Props) {
         </div>
       </div>
 
-[{inscriptionDetails.content_type}]
-      {inscriptionDetails.content_type === "image/webp" && (
-        <img src={contentApiEndpoint} />
-      )}
-
-      {inscriptionDetails.content_type  && (
-        <textarea>{rawData}</textarea>
-      )}
+      {content}
 
       <div>
         {/* {inscriptionContent?.type === "json" && (

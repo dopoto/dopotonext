@@ -1,7 +1,7 @@
 export interface Inscription {
   id: string;
   address: string;
-  content_type: "image/webp" | "text/html;charset=utf-8";
+  content_type: string;
   content_length: number;
   output: string;
   location: string;
