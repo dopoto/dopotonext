@@ -1,95 +1,69 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import { useState, FormEvent } from 'react';
+import axios from 'axios'; 
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+interface Inscription {
+  id: string
 }
+interface UTXO {
+  inscriptions: Inscription[];
+  id: string;
+}
+
+async function getOrdinalUtxos(address: string): Promise<UTXO[]> {
+  //const response = await fetch(`https://api-3.xverse.app/v1/address/${bitcoinAddress}/ordinal-utxo`)
+  const response = await  axios.get<UTXO[]>(`https://api-3.xverse.app/v1/address/${bitcoinAddress}/ordinal-utxo`);
+   
+  return response.data;
+}
+
+const Home = () => {
+  const [address, setAddress] = useState<string>('bc1pe6y27ey6gzh6p0j250kz23zra7xn89703pvmtzx239zzstg47j3s3vdvvs');
+  const [utxos, setUtxos] = useState<UTXO[]>([]);
+  const [error, setError] = useState<string>('');
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError('');
+    setUtxos([]);
+
+    try {
+      //const utxos = await getOrdinalUtxos(address);
+      axios.get(`https://api-3.xverse.app/v1/address/${address}/ordinal-utxo`).then((data) => {
+        console.log(data);
+        setUtxos(data?.data.results);
+      });
+      setUtxos(utxos);
+    } catch (err) {
+      setError('Failed to fetch UTXOs or invalid address.');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Bitcoin Ordinal Inscriptions Lookup</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter Bitcoin Wallet Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          required
+        />
+        <button type="submit">Lookup</button>
+      </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* <ul>
+        {utxos?.map((insc) => (
+          <li key={insc.id}>
+              ID: {insc.id}
+          </li>
+        ))}
+      </ul> */}
+      {JSON.stringify(utxos)}
+    </div>
+  );
+};
+
+export default Home;
