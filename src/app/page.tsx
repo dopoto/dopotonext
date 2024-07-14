@@ -5,6 +5,8 @@ import axios from "axios";
 import Link from "next/link";
 import { UTXO } from "./models/utxo";
 
+import styles from "./page.module.css";
+
 const Home = () => {
   const [address, setAddress] = useState<string>(
     "bc1pe6y27ey6gzh6p0j250kz23zra7xn89703pvmtzx239zzstg47j3s3vdvvs"
@@ -30,33 +32,53 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h1>Bitcoin Ordinal Inscriptions Lookup</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Bitcoin Ordinal Inscriptions Lookup</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter Bitcoin Wallet Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
-        />
-        <button type="submit">Lookup</button>
+        <div className={styles.section}>
+          <label htmlFor="btctext">Owner Bitcoin Address:</label>
+        </div>
+        <div className={styles.section}>
+          <input
+            type="text"
+            id="btctext"
+            placeholder="Enter Bitcoin Wallet Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+        </div>
+        <div className={styles.section}>
+          <button type="submit">Lookup</button>
+        </div>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <ul>
-        {utxos?.map((utxo) => (
-          <div>
-            <b>{utxo.id}</b>
-            {utxo.inscriptions.map((insc) => {
-              return (
-                <Link key={insc.id}  href={`/inscription/${address}/${insc.id}`}>                   
-                  Inscription ID: {insc.id}{" "}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-      </ul>
+
+      {utxos.length > 0 && (
+        <>
+          <div>Results:</div>
+          <ul className="list">
+            {utxos?.map((utxo) => (
+              <div>
+                {utxo.inscriptions.map((inscription) => {
+                  return (
+                    <li className={styles.listItem}>
+                       
+                        <Link className={styles.listItemText}
+                          key={inscription.id}
+                          href={`/inscription/${address}/${inscription.id}`}
+                        >
+                          Inscription {inscription.id.slice(0,8)}
+                        </Link>
+                      
+                      <span className={styles.listItemArrow}>&gt;</span>
+                    </li>
+                  );
+                })}
+              </div>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 };
