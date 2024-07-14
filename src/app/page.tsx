@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import { UTXO } from "./models/utxo";
@@ -8,9 +9,10 @@ import { UTXO } from "./models/utxo";
 import styles from "./page.module.css";
 
 const Home = () => {
-  const [address, setAddress] = useState<string>(
-    "bc1pe6y27ey6gzh6p0j250kz23zra7xn89703pvmtzx239zzstg47j3s3vdvvs"
-  );
+  const searchParams = useSearchParams();
+  const bitcoinAddress = searchParams.get("bitcoinAddress") ?? "";
+
+  const [address, setAddress] = useState<string>(bitcoinAddress);
   const [utxos, setUtxos] = useState<UTXO[]>([]);
 
   const handleSubmit = async (event: FormEvent) => {
@@ -56,18 +58,16 @@ const Home = () => {
               <div>
                 {utxo.inscriptions.map((inscription) => {
                   return (
-                    <li className={styles.listItem}>
-                      <Link
-                        className={styles.listItemText}
-                        key={inscription.id}
-                        href={`/inscription/${address}/${inscription.id}`}
-                      >
-                        // Inscription {inscription.id.slice(0, 8)}
-                        {inscription.id}
-                      </Link>
-
-                      <span className={styles.listItemArrow}>&gt;</span>
-                    </li>
+                    <Link
+                      className={styles.listItemText}
+                      key={inscription.id}
+                      href={`/inscription/${address}/${inscription.id}`}
+                    >
+                      <li className={styles.listItem}>
+                        Inscription {inscription.id.slice(0, 8)}
+                        <span className={styles.listItemArrow}>&gt;</span>
+                      </li>{" "}
+                    </Link>
                   );
                 })}
               </div>

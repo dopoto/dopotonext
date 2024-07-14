@@ -27,11 +27,9 @@
 }
 
 .listItemText {
-  flex-grow: 1;
-  
+  flex-grow: 1;  
   text-decoration: none;
   color:white;
-   
 }
 
 .listItemArrow {

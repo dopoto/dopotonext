@@ -17,13 +17,14 @@
 }
 
 .header .leftArrow {
-  margin-right: 10px; /* Adjust spacing between arrow and title */
+  margin-right: 10px;
+  text-decoration: none;
+  color: white;
 }
 
 .header .title {
   flex-grow: 1;
   text-align: center;
-   
 }
 
 .secondaryTitle {
@@ -31,16 +32,13 @@
   width: 100%;
 }
 
-
 .sectionTitle {
-  color: #BABABA;
+  color: #bababa;
   font-size: 12px;
   width: 100%;
-
 }
 
 .sectionContent {
-  color:white;
+  color: white;
   font-size: 12px;
-
 }

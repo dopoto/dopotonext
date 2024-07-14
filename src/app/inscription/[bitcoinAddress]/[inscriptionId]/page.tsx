@@ -1,5 +1,6 @@
 import { Inscription } from "@/app/models/inscription";
 import styles from "./page.module.css";
+import Link from "next/link";
 
 async function getInscriptionDetails(
   bitcoinAddress: string,
@@ -8,10 +9,6 @@ async function getInscriptionDetails(
   const apiEndpoint = `https://api-3.xverse.app/v1/address/${bitcoinAddress}/ordinals/inscriptions/${inscriptionId}`;
   const res = await fetch(apiEndpoint);
   return res.json();
-}
-
-interface InscriptionContent {
-  rawData: any;
 }
 
 async function getInscriptionTextContent(contentApiEndpoint: string) {
@@ -35,20 +32,11 @@ export default async function InscriptionDetailsPage({ params }: Props) {
     inscriptionId
   );
   const contentApiEndpoint = `https://ord.xverse.app/content/${inscriptionId}`;
-  // const inscriptionContent = await getInscriptionContent(
-  //   contentApiEndpoint,
-  //   inscriptionDetails.content_type
-  // );
 
   const rawData = await getInscriptionTextContent(contentApiEndpoint);
 
-  // const rawData =
-  //   inscriptionDetails.content_type === "application/json"
-  //     ? await getInscriptionTextContent(contentApiEndpoint)
-  //     : null;
-
-  const content = inscriptionDetails?.content_type.startsWith("image/webp") ? (
-    <img src={contentApiEndpoint} />
+  const content = inscriptionDetails?.content_type.startsWith("image/") ? (
+    <img src={contentApiEndpoint} alt="" />
   ) : (
     <textarea>{rawData}</textarea>
   );
@@ -56,25 +44,17 @@ export default async function InscriptionDetailsPage({ params }: Props) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.leftArrow}>←</div>
+        <Link
+          className={styles.leftArrow}
+          href={`/?bitcoinAddress=${bitcoinAddress}`}
+        >
+          &lt;
+        </Link>
         <div className={styles.title}>
           <h1>Details</h1>
         </div>
       </div>
-
       {content}
-
-      <div>
-        {/* {inscriptionContent?.type === "json" && (
-          <textarea>{inscriptionContent.rawData}</textarea>
-        )}
-        {inscriptionContent?.type === "text" && (
-          <textarea>{inscriptionContent.rawData}</textarea>
-        )}
-        {inscriptionContent?.type === "image" && (
-          <img src={contentApiEndpoint} />
-        )} */}
-      </div>
       <div className={styles.secondaryTitle}>
         Inscription {inscriptionDetails?.id}
       </div>
@@ -97,7 +77,11 @@ export default async function InscriptionDetailsPage({ params }: Props) {
       </div>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Content length</div>
-        <input type="text" value={inscriptionDetails?.content_length} />
+        <input
+          type="text"
+          disabled
+          value={inscriptionDetails?.content_length}
+        />
       </div>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Location</div>
